@@ -17,6 +17,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/valyala/gozstd"
 	"log/slog"
 	"math"
 	"strconv"
@@ -512,7 +513,7 @@ func NewQueueManager(
 		highestRecvTimestamp: highestRecvTimestamp,
 
 		protoMsg: protoMsg,
-		enc:      SnappyBlockCompression, // Hardcoded for now, but scaffolding exists for likely future use.
+		enc:      ZstdBlockCompression, // Hardcoded for now, but scaffolding exists for likely future use.
 	}
 
 	walMetadata := false
@@ -2141,6 +2142,10 @@ func compressPayload(tmpbuf *[]byte, inp []byte, enc Compression) (compressed []
 			// grow the buffer for the next time
 			*tmpbuf = make([]byte, n)
 		}
+		return compressed, nil
+	case ZstdBlockCompression:
+		buf := *tmpbuf
+		compressed = gozstd.Compress(buf[:0], inp)
 		return compressed, nil
 	default:
 		return compressed, fmt.Errorf("Unknown compression scheme [%v]", enc)

@@ -62,6 +62,7 @@ type Compression string
 const (
 	// SnappyBlockCompression represents https://github.com/google/snappy/blob/2c94e11145f0b7b184b831577c93e5a41c4c0346/format_description.txt
 	SnappyBlockCompression Compression = "snappy"
+	ZstdBlockCompression   Compression = "zstd"
 )
 
 var (
@@ -227,7 +228,7 @@ func NewWriteClient(name string, conf *ClientConfig) (WriteClient, error) {
 		retryOnRateLimit: conf.RetryOnRateLimit,
 		timeout:          time.Duration(conf.Timeout),
 		writeProtoMsg:    writeProtoMsg,
-		writeCompression: SnappyBlockCompression,
+		writeCompression: ZstdBlockCompression,
 	}, nil
 }
 
