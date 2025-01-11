@@ -17,7 +17,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/valyala/gozstd"
+	"github.com/prometheus/prometheus/zstd"
 	"log/slog"
 	"math"
 	"strconv"
@@ -2145,7 +2145,7 @@ func compressPayload(tmpbuf *[]byte, inp []byte, enc Compression) (compressed []
 		return compressed, nil
 	case ZstdBlockCompression:
 		buf := *tmpbuf
-		compressed = gozstd.Compress(buf[:0], inp)
+		compressed = zstd.CompressLevel(buf[:0], inp, 0)
 		return compressed, nil
 	default:
 		return compressed, fmt.Errorf("Unknown compression scheme [%v]", enc)
